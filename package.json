@@ -1,5 +1,5 @@
 {
-  "name": "Backend «Mesto»",
+  "name": "backend-mesto",
   "version": "1.0.0",
   "description": "",
   "lint": "npx eslint .",
