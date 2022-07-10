@@ -1,0 +1,27 @@
+{
+  "name": "Backend «Mesto»",
+  "version": "1.0.0",
+  "description": "",
+  "lint": "npx eslint .",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "Maxim Yakushenkov",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "mongoose": "^5.13.14"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
+    "@typescript-eslint/parser": "^5.30.5",
+    "eslint": "^8.19.0",
+    "eslint-plugin-react": "^7.30.1",
+    "nodemon": "^2.0.19"
+  }
+}
