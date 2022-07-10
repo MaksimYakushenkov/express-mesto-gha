@@ -26,6 +26,6 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.listen(3005, () => {
+app.listen(3000, () => {
   console.log('Сервер запущен');
 });
