@@ -10,7 +10,7 @@ module.exports.getUser = (req, res) => {
     User.findById(req.params.userId)
     .then((user) => {
         if(!user) {
-            return res.status(400).send({ message: 'Пользователь не найден или переданы некорректные данные!' })
+            return res.status(404).send({ message: 'Пользователь не найден или переданы некорректные данные!' })
         }
         res.status(200).send({ data: user });
     })
@@ -18,8 +18,8 @@ module.exports.getUser = (req, res) => {
         if(err.name === "ValidationError") {
             return res.status(400).send({ message: 'Переданы некорректные данные!' })
         }
-        if (err === "CastError") {
-            return res.status(400).send({ message: 'Невозможно прочитать id' })
+        if (err.name === "CastError") {
+            return res.status(400).send({ message: 'Некорректный формат id' })
         }
         res.status(500).send({ message: 'Что-то пошло не так.' });
     });

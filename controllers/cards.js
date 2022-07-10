@@ -16,7 +16,7 @@ module.exports.createCard = (req, res) => {
       }
       res.status(500).send({ message: 'Что-то пошло не так.' })
     });
-    
+
   };
 
 module.exports.deleteCard = (req, res) => {
@@ -25,9 +25,17 @@ module.exports.deleteCard = (req, res) => {
       if(!card) {
         return res.status(404).send({ message: 'Карточка не найдена' })
       }
-      res.status(201).send({ message: "Карточка успешно удалена!" });
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: 'Некорректный формат id' })
+      }
+      res.status(200).send({ message: "Карточка успешно удалена!" });
     })
-    .catch(() => res.status(500).send({ message: 'Что-то пошло не так.' }));
+    .catch((err) => {
+      if (err.name === "CastError") {
+          return res.status(400).send({ message: 'Некорректный формат id' })
+      }
+      res.status(500).send({ message: 'Что-то пошло не так.' });
+  });
 };
 
 module.exports.likeCard = (req, res) => {
@@ -36,17 +44,37 @@ module.exports.likeCard = (req, res) => {
         { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
         { new: true },
       )
-    .then(res.status(201).send({ message: "Лайк поставлен!"}))
-    .catch(() => res.status(500).send({ message: 'Что-то пошло не так.' }));
+    .then((card) => {
+      if(!card) {
+        return res.status(404).send({ message: 'Карточка не найдена' })
+      }
+      res.status(200).send({ message: "Лайк поставлен!" });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+          return res.status(400).send({ message: 'Некорректный формат id' })
+      }
+      res.status(500).send({ message: 'Что-то пошло не так.' });
+    });
 };
 
-  
+
   module.exports.dislikeCard = (req, res) => {
     Card.findByIdAndUpdate(
         req.params.cardId,
         { $pull: { likes: req.user._id } }, // убрать _id из массива
         { new: true },
       )
-      .then(res.status(201).send({ message: "Лайк убран!"}))
-    .catch(() => res.status(500).send({ message: 'Что-то пошло не так.' }));
+      .then((card) => {
+        if(!card) {
+          return res.status(404).send({ message: 'Карточка не найдена' })
+        }
+        res.status(200).send({ message: "Лайк успешно снят!" });
+      })
+      .catch((err) => {
+        if (err.name === "CastError") {
+            return res.status(400).send({ message: 'Некорректный формат id' })
+        }
+        res.status(500).send({ message: 'Что-то пошло не так.' });
+      });
 };
