@@ -1,3 +1,4 @@
+const { PORT = 3000 } = process.env;
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -12,12 +13,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '62ca8c536f4fba2990b1e159'
+    _id: '62ca8c536f4fba2990b1e159',
   };
 
   next();
@@ -25,10 +26,11 @@ app.use((req, res, next) => {
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
 app.use('*', (req, res) => {
-  res.status(404).send({ message: "Неверный URl"})
+  res.status(404).send({ message: 'Неверный URl' });
 });
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log('Сервер запущен');
 });
