@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const UnauthorizedError = require('../utils/errors/unauthorized-err');
 const isEmail = require('validator/lib/isEmail');
-const bcrypt = require('bcryptjs'); 
+const bcrypt = require('bcryptjs');
+const UnauthorizedError = require('../utils/errors/unauthorized-err');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -17,19 +17,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
-    select: false
+    select: false,
   },
   name: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: 'Жак-Ив Кусто'
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: 'Исследователь'
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
@@ -39,10 +39,11 @@ const userSchema = new mongoose.Schema({
       },
       message: 'Ссылка не прошла валидацию. Неверный формат.',
     },
-    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
 });
 
+// eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password, next) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
