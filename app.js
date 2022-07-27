@@ -6,6 +6,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const {
   login, createUser,
 } = require('./controllers/users');
+const NotFoundError = require('./utils/errors/not-found-err');
 const auth = require('./middlewares/auth');
 
 const app = express();
@@ -40,9 +41,7 @@ app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Неверный URl' });
-});
+app.use('*', (req, res, next) => next(new NotFoundError('Неверный URl')));
 app.use(errors());
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {

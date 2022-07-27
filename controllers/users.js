@@ -4,7 +4,6 @@ const User = require('../models/user');
 const NotFoundError = require('../utils/errors/not-found-err');
 const BadRequestError = require('../utils/errors/bad-request-err');
 const ConflictError = require('../utils/errors/conflict-err');
-const UnauthorizedError = require('../utils/errors/unauthorized-err');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -76,52 +75,38 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  User.findById(req.user._id)
-    .then((user) => {
-      if (JSON.stringify(req.user._id) !== JSON.stringify(user._id)) {
-        throw new UnauthorizedError('Нельзя менять даннные другого пользователя.');
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError('Переданы некорректные данные!'));
       }
-      User.findByIdAndUpdate(
-        req.user._id,
-        { name, about },
-        {
-          new: true,
-          runValidators: true,
-        },
-      )
-        // eslint-disable-next-line no-shadow
-        .then((user) => res.send({ data: user }))
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            return next(new BadRequestError('Переданы некорректные данные!'));
-          }
-          return next(err);
-        });
+      return next(err);
     });
 };
 
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.findById(req.user._id)
-    .then((user) => {
-      if (JSON.stringify(req.user._id) !== JSON.stringify(user._id)) {
-        throw new UnauthorizedError('Нельзя менять аватарку другого пользователя.');
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatar },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError('Переданы некорректные данные!'));
       }
-      User.findByIdAndUpdate(
-        req.user._id,
-        { avatar },
-        {
-          new: true,
-          runValidators: true,
-        },
-      )
-        // eslint-disable-next-line no-shadow
-        .then((user) => res.send({ data: user }))
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            return next(new BadRequestError('Переданы некорректные данные!'));
-          }
-          return next(err);
-        });
+      return next(err);
     });
 };
