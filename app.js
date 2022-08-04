@@ -8,6 +8,8 @@ const {
 } = require('./controllers/users');
 const NotFoundError = require('./utils/errors/not-found-err');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('./middlewares/cors');
 
 const app = express();
 
@@ -17,10 +19,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // подключаемся к серверу mongo
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
   useUnifiedTopology: true,
 });
+
+app.use(requestLogger); // подключаем логгер запросов
+app.use(cors);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -42,6 +45,7 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use('*', (req, res, next) => next(new NotFoundError('Неверный URl')));
+app.use(errorLogger); // подключаем логгер ошибок
 app.use(errors());
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
